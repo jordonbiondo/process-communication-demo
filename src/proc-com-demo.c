@@ -9,18 +9,50 @@
 #include <signal.h>
 #include <stdbool.h>
 
+
+/* **************************************************************
+ * Macros
+ * ************************************************************** */
+
 #define PFLUSH(...) {				\
 		     printf(__VA_ARGS__);	\
 		     fflush(stdout);		\
 		     }
 
+/* **************************************************************
+ * Prototypes
+ * ************************************************************** */
+
 void handle_user_signal (int);
-void handle_child_kill(int);
+
+
 void handle_interrupt(int);
+
+
 void child_loop(void);
 
+/* **************************************************************
+ * Globals
+ * ************************************************************** */
+
+/**
+ * Child Process ID.
+ */
 pid_t child_pid;
+
+
+/**
+ * Parent Process ID.
+ */
 pid_t parent_pid;
+
+/* **************************************************************
+ * Code
+ * ************************************************************** */
+
+/**
+ * Main
+ */
 int main(int argc, char* argv[], char* envp[]) {
   parent_pid = getpid();
   child_pid = fork();
@@ -38,20 +70,33 @@ int main(int argc, char* argv[], char* envp[]) {
   return 0;
 }
 
-void handle_child_kill(int sig) {
-  PFLUSH("child shutting down!\n");
-}
 
+/**
+ * Handle User Signal.
+ * Log the occurence of receiving a SIGUSR1 or SIGUSR2.
+ */
 void handle_user_signal(int sig) {
   PFLUSH("received: %s\n", strsignal(sig));
 } 
 
+
+/**
+ * Handle Interrupt
+ * Upon receiving a SIGINT, the parent will kill the child and exit.
+ */
 void handle_interrupt(int sig) {
   PFLUSH("received: %s\n", strsignal(sig));
   PFLUSH("killing the child without remorse...\n");
+  kill(child_pid, SIGKILL);
   PFLUSH("parent shutting down...\n");
   exit(0);
 }
+
+
+/**
+ * Child Signal Loop
+ * Waits 1-5 seconds then sends either a SIGUSR1 or SIGUSR2.
+ */
 void child_loop(void) {
   while(true) {
     sleep((rand() % 5) + 1);
