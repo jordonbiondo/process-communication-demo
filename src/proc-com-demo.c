@@ -14,10 +14,26 @@
  * Macros
  * ************************************************************** */
 
+/**
+ * printf then flush stdout, too lazy to use write
+ */
 #define PFLUSH(...) {				\
-		     printf(__VA_ARGS__);	\
-		     fflush(stdout);		\
-		     }
+    printf(__VA_ARGS__);			\
+    fflush(stdout);				\
+  }
+
+/**
+ * Alias for kill, because it's an awfully named function.
+ */
+#define SEND_SIG(pid, sig) kill(pid, sig)
+
+/**
+ * Just ridiculous
+ */
+
+#define TAKE_A_NAP sleep((rand() % 5) + 1)
+#define LUCKY rand() & 1
+#define ONE_TO_FIVE_SECS (rand() % 5) + 1
 
 /* **************************************************************
  * Prototypes
@@ -54,19 +70,30 @@ pid_t parent_pid;
  * Main
  */
 int main(int argc, char* argv[], char* envp[]) {
+
   parent_pid = getpid();
   child_pid = fork();
-  if (child_pid) {
-    signal (SIGUSR1, handle_user_signal);
-    signal (SIGUSR2, handle_user_signal);
-    signal (SIGINT, handle_interrupt);
+  switch(child_pid) {
+  case 0: {
+    child_loop();
+    break;
+  }
+  case -1: {
+    PFLUSH("Fork failed!\n");
+    exit(-1);
+  }
+  default: {
+    signal(SIGUSR1, handle_user_signal);
+    signal(SIGUSR2, handle_user_signal);
+    signal(SIGINT, handle_interrupt);
     while(1) {
       PFLUSH("waiting...         ");
       pause();
     }
-  } else {
-    child_loop();
+    break;
   }
+  }
+
   return 0;
 }
 
@@ -85,10 +112,10 @@ void handle_user_signal(int sig) {
  * Upon receiving a SIGINT, the parent will kill the child and exit.
  */
 void handle_interrupt(int sig) {
-  PFLUSH("received: %s\n", strsignal(sig));
-  PFLUSH("killing the child without remorse...\n");
-  kill(child_pid, SIGKILL);
-  PFLUSH("parent shutting down...\n");
+  PFLUSH("\n\treceived: %s\n", strsignal(sig));
+  PFLUSH("\tkilling child process...\n");
+  SEND_SIG(child_pid, SIGKILL);
+  PFLUSH("\tparent shutting down...\n");
   exit(0);
 }
 
@@ -99,13 +126,11 @@ void handle_interrupt(int sig) {
  */
 void child_loop(void) {
   while(true) {
-    sleep((rand() % 5) + 1);
-    if (rand() & 1) {
-      /* raise(SIGUSR1); */
-      kill(parent_pid, SIGUSR1);
+    TAKE_A_NAP;
+    if (LUCKY) {
+      SEND_SIG(parent_pid, SIGUSR1);
     } else {
-      /* raise(SIGUSR2); */
-      kill(parent_pid, SIGUSR2);
+      SEND_SIG(parent_pid, SIGUSR2);
     }
   }
 }
