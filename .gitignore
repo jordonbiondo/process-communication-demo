@@ -2,3 +2,6 @@
 *.out
 *~
 #*
+/build/pcd-dbg
+/build/pcd-opt
+/build/proc-com-demo
