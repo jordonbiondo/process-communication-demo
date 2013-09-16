@@ -6,3 +6,5 @@
 /build/pcd-opt
 /build/proc-com-demo
 /.sconsign.dblite
+/build/proc-com-demo-sigaction
+/src/#proc-com-demo.h#
