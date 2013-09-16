@@ -30,9 +30,12 @@
 /**
  * Just ridiculous
  */
-#define TAKE_A_NAP sleep((rand() % 5) + 1)
+#ifndef NAP_MAX
+// max time to sleep between signal
+#define NAP_MAX 5
+#endif
+#define TAKE_A_NAP sleep((rand() % NAP_MAX) + 1)
 #define LUCKY rand() & 1
-#define ONE_TO_FIVE_SECS (rand() % 5) + 1
 
 /* **************************************************************
  * Prototypes
