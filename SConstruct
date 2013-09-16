@@ -7,8 +7,9 @@ opt = env.Clone()
 opt.Append(CCFLAGS = ['-O3'])
 
 #debug env
+#gdb info, set debug 1, child sleeps or 1 sec max
 dbg = env.Clone()
-dbg.Append(CCFLAGS = ['-g', '-DDEBUG=1'])
+dbg.Append(CCFLAGS = ['-g', '-DDEBUG=1', '-DNAP_MAX=1'])
 
 #main program
 shell = env.Program('build/proc-com-demo', source_files)
