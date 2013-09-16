@@ -52,10 +52,10 @@ void handle_signals(int sig) {
     break;
   }
   case SIGINT: {
-    PFLUSH("\n\treceived: %s\n", strsignal(sig));
-    PFLUSH("\tkilling child process...\n");
-    SEND_SIG(child_pid, SIGKILL);
-    PFLUSH("\tparent shutting down...\n");
+    PFLUSH("\n\treceived: %s\n\tkilling child %d... %s\n\tparent shutting down...\n", 
+	   strsignal(sig),
+	   child_pid, 
+	   (SEND_SIG(child_pid, SIGKILL) == 0) ? "OK" : "FAIL");
     exit(0);
     break;
   }

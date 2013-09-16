@@ -76,11 +76,10 @@ void handle_signals_info(int sig, siginfo_t* info, void* v) {
     break;
   }
   case SIGINT: {
-    PFLUSH("\n\treceived: %s\n", strsignal(sig));
-    PFLUSH("\tkilling child processes...\n");
-    SEND_SIG(child_pid, SIGKILL);
-    SEND_SIG(child_pid2, SIGKILL);
-    PFLUSH("\tparent shutting down...\n");
+    PFLUSH("\n\treceived: %s\n\t%s %d... %s\n\t%s %d... %s\n\tparent shutting down...\n", 
+	   strsignal(sig),
+	   "killing child", child_pid,  (SEND_SIG(child_pid, SIGKILL) == 0) ? "OK" : "FAIL",
+	   "killing child", child_pid2, (SEND_SIG(child_pid2, SIGKILL) == 0) ? "OK" : "FAIL");
     exit(0);
     break;
   }
