@@ -30,7 +30,6 @@
 /**
  * Just ridiculous
  */
-
 #define TAKE_A_NAP sleep((rand() % 5) + 1)
 #define LUCKY rand() & 1
 #define ONE_TO_FIVE_SECS (rand() % 5) + 1
@@ -70,17 +69,16 @@ pid_t parent_pid;
  * Main
  */
 int main(int argc, char* argv[], char* envp[]) {
-
   parent_pid = getpid();
   child_pid = fork();
   switch(child_pid) {
-  case 0: {
-    child_loop();
-    break;
-  }
   case -1: {
     PFLUSH("Fork failed!\n");
     exit(-1);
+  }
+  case 0: {
+    child_loop();
+    break;
   }
   default: {
     signal(SIGUSR1, handle_user_signal);
@@ -93,7 +91,6 @@ int main(int argc, char* argv[], char* envp[]) {
     break;
   }
   }
-
   return 0;
 }
 
@@ -133,4 +130,4 @@ void child_loop(void) {
       SEND_SIG(parent_pid, SIGUSR2);
     }
   }
-}
+} 
