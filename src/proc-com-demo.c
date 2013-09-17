@@ -10,6 +10,7 @@
 #include <stdbool.h>
 
 #include "proc-com-demo.h"
+#include "external-strings.h"
 
 /* **************************************************************
  * Code
@@ -23,7 +24,7 @@ int main(int argc, char* argv[], char* envp[]) {
   child_pid = fork();
   switch(child_pid) {
   case -1: {
-    PFLUSH("Fork failed!\n");
+    PFLUSH("%s\n", rs$(failed_fork));
     exit(-1);
   }
   case 0: {
@@ -35,7 +36,7 @@ int main(int argc, char* argv[], char* envp[]) {
     signal(SIGUSR2, handle_signals);
     signal(SIGINT, handle_signals);
     while(1) {
-      PFLUSH("waiting...         ");
+      PFLUSH("%s", rs$(waiting));
       pause();
     }
     break;
@@ -48,14 +49,17 @@ void handle_signals(int sig) {
   switch(sig) {
   case SIGUSR1:
   case SIGUSR2: {
-    PFLUSH("received: %s\n", strsignal(sig));
+    PFLUSH("%s: %s\n", rs$(received), strsignal(sig));
     break;
   }
   case SIGINT: {
-    PFLUSH("\n\treceived: %s\n\tkilling child %d... %s\n\tparent shutting down...\n", 
+    PFLUSH("\n\t%s: %s\n\t%s %d... %s\n\t%s...\n", 
+	   rs$(received),
 	   strsignal(sig),
+	   rs$(killing_child),
 	   child_pid, 
-	   (SEND_SIG(child_pid, SIGKILL) == 0) ? "OK" : "FAIL");
+	   rs$(parent_shutdown),
+	   (SEND_SIG(child_pid, SIGKILL) == 0) ? rs$(ok) : rs$(fail));
     exit(0);
     break;
   }
