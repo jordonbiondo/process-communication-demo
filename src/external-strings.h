@@ -12,17 +12,17 @@
  * Resources
  * ************************************************************** */
 
-def_rs$(failed_fork,		"Fork failed!"); 
+def_rs$(failed_fork, "Fork failed!"); 
 
-def_rs$(waiting,		"waiting...         "); 
+def_rs$(waiting, "waiting...         "); 
 
-def_rs$(received,		"received"); 
+def_rs$(received, "received"); 
 
-def_rs$(killing_child,		"killing child"); 
+def_rs$(killing_child, "killing child"); 
 
-def_rs$(parent_shutdown,	"parent shutting down"); 
+def_rs$(parent_shutdown, "parent shutting down"); 
 
-def_rs$(ok,			"OK"); 
+def_rs$(ok, "OK"); 
 
-def_rs$(fail,			"FAIL"); 
+def_rs$(fail, "FAIL"); 
 

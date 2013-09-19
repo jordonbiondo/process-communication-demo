@@ -26,8 +26,12 @@
  */
 #define TAKE_A_NAP sleep((rand() % NAP_MAX) + 1)
 #define LUCKY rand() & 1
+#define FOREVER while(true)
+#define SOMETIMES(this, skipme, that) {					\
+    if (LUCKY) this; else that;						\
+  }					
 
-
+  
 /* **************************************************************
  * Globals
  * ************************************************************** */
@@ -53,13 +57,10 @@ void handle_signals(int);
  * Waits 1-NAP_MAX seconds then sends either a SIGUSR1 or SIGUSR2.
  */
 void child_loop(void) {
-  while(true) {
+  FOREVER {
     TAKE_A_NAP;
-    if (LUCKY) {
-      SEND_SIG(parent_pid, SIGUSR1);
-    } else {
-      SEND_SIG(parent_pid, SIGUSR2);
-    }
+    SOMETIMES(SEND_SIG(parent_pid, SIGUSR1), OTHERTIMES, SEND_SIG(parent_pid, SIGUSR2));
+	      
   }
 } 
 
