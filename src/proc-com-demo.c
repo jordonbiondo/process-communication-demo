@@ -58,8 +58,9 @@ void handle_signals(int sig) {
 	   strsignal(sig),
 	   rs$(killing_child),
 	   child_pid, 
-	   rs$(parent_shutdown),
-	   (SEND_SIG(child_pid, SIGKILL) == 0) ? rs$(ok) : rs$(fail));
+	   ((SEND_SIG(child_pid, SIGKILL) == 0) ? rs$(ok) : rs$(fail)),
+	   rs$(parent_shutdown)
+	   );
     exit(0);
     break;
   }
